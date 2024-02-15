@@ -1,0 +1,30 @@
+server:
+  port: 8080
+spring:`
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:postgres}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+bot:
+  name:
+  token:
+  chatId:
+
+message:
+  defaultMessage: "Ну здрасьте, приехали! Чтобы начать нажмите /start"
+  choseMachine: "Выберите технику:"
+  editedMachine: "Техника: %s"
+  chooseAttachment: "Выберите навесное оборудование:"
+  editedAttachment: "Навесное оборудование: %s"
+  askPlace: "Введите название населённого пункта"
+  askDate: "Введите дату, на которую необходима техника"
+  askPhone: "Введите номер телефона для связи"
+  successInUserChat: "Заявка отправлена. Водитель техники свяжется с Вами в течении 10 минут."
+  newOrderInGeneralChat: "Новый заказ!\n%s, %s\nМесто: %s\nДата:%s"
+  editedOrderInGeneralChat: "Новый заказ! %s, %s\nВ работу взял %s"
+  newOrderInEmployeeChat: "Ура! У тебя новый заказ!\n%s, %s\nИмя: %s\nМесто: %s\nДата: %s\nТелефон: %s"
+

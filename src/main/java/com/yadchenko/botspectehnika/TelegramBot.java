@@ -1,0 +1,92 @@
+package com.yadchenko.botspectehnika;
+
+import com.yadchenko.botspectehnika.config.BotConfig;
+import com.yadchenko.botspectehnika.entities.Order;
+import com.yadchenko.botspectehnika.enums.Role;
+import com.yadchenko.botspectehnika.repository.OrderRepository;
+import com.yadchenko.botspectehnika.services.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import java.text.SimpleDateFormat;
+
+@Component
+@RequiredArgsConstructor
+public class TelegramBot extends TelegramLongPollingBot {
+    private final BotConfig botConfig;
+    private final MessageService messageService;
+    private final KeyBoardMarkupService keyBoardMarkupService;
+    private final EditMessageService editMessageService;
+    private final OrderRepository orderRepository;
+    private final UserService userService;
+
+    @Override
+    public String getBotUsername() {
+        return botConfig.getName();
+    }
+
+    @Override
+    public String getBotToken() {
+        return botConfig.getToken();
+    }
+
+    @Override
+    public void onUpdateReceived(Update update) {
+        if (update.hasMessage()) {
+            if (update.getMessage().getChat().isSuperGroupChat() && update.getMessage().getNewChatMembers().size() > 0) {
+                SendMessage sendMessage = messageService.create(update.getMessage().getChat().getId(), update.getMessage().getNewChatMembers().get(0).getFirstName() + ", добро пожаловать в группу водителей. Чтобы получать заказы необходимо начать взаимодействие с ботом. Для этого:\n1. Нажмите кнопку \"Начать работу\"\n2. Нажмите кнопку \"Start\"\nГотово! Теперь Вы можете получать заявки от клиентов!", keyBoardMarkupService.welcomeMarkup());
+                executeMessage(sendMessage);
+                return;
+            }
+
+            if (update.getMessage().hasText()) {
+                switch (update.getMessage().getText()) {
+                    case "/start" -> {
+                        userService.getByIdOrCreate(update.getMessage().getFrom(), Role.CLIENT);
+                        SendMessage sendMessage = messageService.create(update.getMessage().getFrom().getId(), "Чтобы выбрать необходимую спецтехнику, нажмите на кнопку \"Сделать заказ\"", keyBoardMarkupService.buildKeyboardMarkup());
+                        executeMessage(sendMessage);
+                    }
+                    case "/statistic" -> {
+                        SendMessage sendMessage = messageService.create(update.getMessage().getChat().getId(), "Количество клиентов: " + userService.getUsersCount() + "\nКоличество заказов: " + orderRepository.findAll().size());
+                        executeMessage(sendMessage);
+                    }
+                    default -> {}
+                }
+            }
+        }
+
+        if (update.hasCallbackQuery()) {
+            String data = update.getCallbackQuery().getData();
+            Order order = orderRepository.getById(Long.parseLong(data));
+
+            User tgUser = update.getCallbackQuery().getFrom();
+            order.setEmployee(userService.getByIdOrCreate(tgUser, Role.EMPLOYEE));
+
+            orderRepository.save(order);
+
+            String pattern = "MM-dd-yyyy";
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+            String date = simpleDateFormat.format(order.getDate());
+
+            SendMessage sendMessage = messageService.create(update.getCallbackQuery().getFrom().getId(), "Ура! Новый заказ\n" + order.getMachine().getName() + "\n" + order.getAttachment().getName() + "\n" + order.getPlace() + "\n" + date + "\n" + order.getPhone());
+            executeMessage(sendMessage);
+            EditMessageText editMessageText = editMessageService.create(update.getCallbackQuery().getMessage().getChatId(), update.getCallbackQuery().getMessage().getMessageId(), order.getMachine().getName() + "\n" + order.getAttachment().getName() + "\n" + order.getPlace() + "\n" + date + "\n" + "Заказ взял " + update.getCallbackQuery().getFrom().getFirstName());
+            executeMessage(editMessageText);
+        }
+    }
+
+    private void executeMessage(BotApiMethod<?> message){
+        try {
+            execute(message);
+        } catch (TelegramApiException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+}
