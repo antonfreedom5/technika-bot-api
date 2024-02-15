@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +46,9 @@ public class OrderService {
 
         SendMessage messageToUser = messageService.create(orderDto.user().getId(), "Ваша заявка принята!\n" + orderDto.machine().getName() + "\n" + orderDto.attachment().getName() + "\n" + orderDto.place() + "\n" + date + "\n" + orderDto.phone());
         telegramBot.execute(messageToUser);
+    }
+
+    public List<Order> getAll() {
+        return orderRepository.findAll();
     }
 }

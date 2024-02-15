@@ -53,10 +53,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                         SendMessage sendMessage = messageService.create(update.getMessage().getFrom().getId(), "Чтобы выбрать необходимую спецтехнику, нажмите на кнопку \"Сделать заказ\"", keyBoardMarkupService.buildKeyboardMarkup());
                         executeMessage(sendMessage);
                     }
-                    case "/statistic" -> {
-                        SendMessage sendMessage = messageService.create(update.getMessage().getChat().getId(), "Количество клиентов: " + userService.getUsersCount() + "\nКоличество заказов: " + orderRepository.findAll().size());
-                        executeMessage(sendMessage);
-                    }
+                    case "/clients" -> executeMessage(messageService.getUserStatistic(update.getMessage().getChat().getId()));
                     default -> {}
                 }
             }

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,5 +46,9 @@ public class UserService {
 
     public int getUsersCount() {
         return userRepository.getUsersCount();
+    }
+
+    public List<User> getAllByRole(Role role) {
+        return userRepository.findAllByRole(role);
     }
 }
