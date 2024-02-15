@@ -1,6 +1,6 @@
 server:
   port: 8080
-spring:`
+spring:
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:postgres}
     username: ${DB_USERNAME:postgres}
