@@ -6,6 +6,7 @@ import com.yadchenko.botspectehnika.enums.Role;
 import com.yadchenko.botspectehnika.repository.OrderRepository;
 import com.yadchenko.botspectehnika.services.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -17,6 +18,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.text.SimpleDateFormat;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
@@ -52,6 +54,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                         userService.getByIdOrCreate(update.getMessage().getFrom(), Role.CLIENT);
                         SendMessage sendMessage = messageService.create(update.getMessage().getFrom().getId(), "Чтобы выбрать необходимую спецтехнику, нажмите на кнопку \"Сделать заказ\"", keyBoardMarkupService.buildKeyboardMarkup());
                         executeMessage(sendMessage);
+                        log.info("New user joined to chat! Id: {}, Name: {}", update.getMessage().getFrom().getId(), update.getMessage().getFrom().getFirstName());
                     }
                     case "/clients" -> executeMessage(messageService.getUserStatistic(update.getMessage().getChat().getId()));
                     default -> {}
@@ -63,19 +66,25 @@ public class TelegramBot extends TelegramLongPollingBot {
             String data = update.getCallbackQuery().getData();
             Order order = orderRepository.getById(Long.parseLong(data));
 
-            User tgUser = update.getCallbackQuery().getFrom();
-            order.setEmployee(userService.getByIdOrCreate(tgUser, Role.EMPLOYEE));
+            if (order.getEmployee() == null) {
+                User tgUser = update.getCallbackQuery().getFrom();
+                order.setEmployee(userService.getByIdOrCreate(tgUser, Role.EMPLOYEE));
 
-            orderRepository.save(order);
+                orderRepository.save(order);
 
-            String pattern = "MM-dd-yyyy";
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-            String date = simpleDateFormat.format(order.getDate());
+                String pattern = "MM-dd-yyyy";
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+                String date = simpleDateFormat.format(order.getDate());
 
-            SendMessage sendMessage = messageService.create(update.getCallbackQuery().getFrom().getId(), "Ура! Новый заказ\n" + order.getMachine().getName() + "\n" + order.getAttachment().getName() + "\n" + order.getPlace() + "\n" + date + "\n" + order.getPhone());
-            executeMessage(sendMessage);
-            EditMessageText editMessageText = editMessageService.create(update.getCallbackQuery().getMessage().getChatId(), update.getCallbackQuery().getMessage().getMessageId(), order.getMachine().getName() + "\n" + order.getAttachment().getName() + "\n" + order.getPlace() + "\n" + date + "\n" + "Заказ взял " + update.getCallbackQuery().getFrom().getFirstName());
-            executeMessage(editMessageText);
+                SendMessage sendMessage = messageService.create(update.getCallbackQuery().getFrom().getId(), "Ура! У тебя новый заказ!\n" + order.getMachine().getName() + "\n" + order.getAttachment().getName() + "\n" + order.getPlace() + "\n" + date + "\n" + order.getPhone());
+                executeMessage(sendMessage);
+                EditMessageText editMessageText = editMessageService.create(update.getCallbackQuery().getMessage().getChatId(), update.getCallbackQuery().getMessage().getMessageId(), order.getMachine().getName() + "\n" + order.getAttachment().getName() + "\n" + order.getPlace() + "\n" + date + "\n" + "Заказ взял " + update.getCallbackQuery().getFrom().getFirstName());
+                executeMessage(editMessageText);
+
+                log.info("Employee got new order to work! Order: {}, Employee: {}", order.getId(), order.getEmployee().getId());
+            } else {
+                log.info("Unfortunately this order already is busy! Order: {}, Employee: {}", order.getId(), order.getEmployee().getId());
+            }
         }
     }
 
