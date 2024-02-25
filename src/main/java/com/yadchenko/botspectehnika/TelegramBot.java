@@ -49,6 +49,14 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
 
             if (update.getMessage().hasText()) {
+                if (update.getMessage().getText().startsWith("/personal") && update.getMessage().getFrom().getId() == 970694273) {
+                    String[] entries = update.getMessage().getText().split("\n");
+                    String chatId = entries[1];
+                    String message = entries[2];
+                    SendMessage sendMessage = messageService.create(Long.parseLong(chatId), message, keyBoardMarkupService.welcomeMarkup());
+                    executeMessage(sendMessage);
+                }
+
                 switch (update.getMessage().getText()) {
                     case "/start" -> {
                         userService.getByIdOrCreate(update.getMessage().getFrom(), Role.CLIENT);
