@@ -53,7 +53,7 @@ public class TelegramBot extends TelegramLongPollingBot {
                     String[] entries = update.getMessage().getText().split("\n");
                     String chatId = entries[1];
                     String message = entries[2];
-                    SendMessage sendMessage = messageService.create(Long.parseLong(chatId), message, keyBoardMarkupService.welcomeMarkup());
+                    SendMessage sendMessage = messageService.create(Long.parseLong(chatId), message);
                     executeMessage(sendMessage);
                 }
 
