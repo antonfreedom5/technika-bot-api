@@ -41,7 +41,7 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        String pattern = "MM-dd-yyyy";
+        String pattern = "dd.MM.yyyy";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String date = simpleDateFormat.format(orderDto.date());
 
@@ -51,7 +51,7 @@ public class OrderService {
         SendMessage messageToUser = messageService.create(orderDto.user().getId(), "Ваша заявка принята!\n" + orderDto.machine().getName() + "\n" + orderDto.attachment().getName() + "\n" + orderDto.place() + "\n" + date + "\n" + orderDto.phone());
         telegramBot.execute(messageToUser);
 
-        log.info("New order! OrderId: {}, UserId: {}", order.getId(), orderDto.user().getId());
+        log.info("Order saved! OrderId: {}, UserId: {}", order.getId(), orderDto.user().getId());
     }
 
     public List<Order> getAll() {
