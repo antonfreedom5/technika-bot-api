@@ -17,7 +17,7 @@ public class KeyBoardMarkupService {
         List<List<InlineKeyboardButton>> keyboardRows = new ArrayList<>();
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText("Сделать заказ");
-        button.setWebApp(WebAppInfo.builder().url("https://spectechnika.webtm.ru/").build());
+        button.setWebApp(WebAppInfo.builder().url("https://zbuduem.by/").build());
         keyboardRows.add(List.of(button));
         InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
         inlineKeyboardMarkup.setKeyboard(keyboardRows);
