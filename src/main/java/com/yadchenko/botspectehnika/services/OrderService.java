@@ -37,7 +37,9 @@ public class OrderService {
         order.setPlace(orderDto.place());
         order.setPhone(orderDto.phone());
 
-        order.setUser(userService.getByIdOrCreate(orderDto.user(), Role.CLIENT));
+        if (orderDto.user() != null) {
+            order.setUser(userService.getByIdOrCreate(orderDto.user(), Role.CLIENT));
+        }
 
         Order savedOrder = orderRepository.save(order);
 
@@ -48,10 +50,12 @@ public class OrderService {
         SendMessage messageToGroup = messageService.create(botConfig.getChatId(), "Новый заказ!\n" + orderDto.machine().getName() + "\n" + orderDto.attachment().getName() + "\n" + orderDto.place() + "\n" + date, keyBoardMarkupService.takeOrderMarkup(savedOrder.getId()));
         telegramBot.execute(messageToGroup);
 
-        SendMessage messageToUser = messageService.create(orderDto.user().getId(), "Ваша заявка принята!\n" + orderDto.machine().getName() + "\n" + orderDto.attachment().getName() + "\n" + orderDto.place() + "\n" + date + "\n" + orderDto.phone());
-        telegramBot.execute(messageToUser);
+        if (orderDto.user() != null) {
+            SendMessage messageToUser = messageService.create(orderDto.user().getId(), "Ваша заявка принята!\n" + orderDto.machine().getName() + "\n" + orderDto.attachment().getName() + "\n" + orderDto.place() + "\n" + date + "\n" + orderDto.phone());
+            telegramBot.execute(messageToUser);
+        }
 
-        log.info("Order saved! OrderId: {}, UserId: {}", order.getId(), orderDto.user().getId());
+        log.info("Order saved! OrderId: {}, UserId: {}", order.getId(), orderDto.user() != null ? orderDto.user().getId() : "browser");
     }
 
     public List<Order> getAll() {

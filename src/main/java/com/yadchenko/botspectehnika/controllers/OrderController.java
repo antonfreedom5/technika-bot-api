@@ -16,7 +16,8 @@ public class OrderController {
 
     @PostMapping("/save")
     void save(@RequestBody OrderDto orderDto) {
-        log.info("New order! " + orderDto.user().getId());
+        String from = orderDto.user() == null ? "browser" : "telegram";
+        log.info("New order! From " + from);
         orderService.save(orderDto);
     }
 }
