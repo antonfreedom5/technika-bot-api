@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @Query(value = "select o from Order o join fetch o.machine and join fetch o.attachment where o.id = :id")
+    @Query(value = "select o from Order o join fetch o.machine and left join fetch o.attachment where o.id = :id")
     Order getById(Long id);
 }

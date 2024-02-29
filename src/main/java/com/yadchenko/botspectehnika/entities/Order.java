@@ -24,6 +24,8 @@ public class Order implements Cloneable {
     private Machine machine;
     @ManyToOne
     private Attachment attachment;
+    @ManyToOne
+    private Category category;
     private Date date;
     private String place;
     private Date orderDate;

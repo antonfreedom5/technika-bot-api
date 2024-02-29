@@ -30,4 +30,12 @@ public class Machine {
             inverseJoinColumns = { @JoinColumn(name = "attachment_id") }
     )
     private Set<Attachment> attachments = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "machines_categories",
+            joinColumns = { @JoinColumn(name = "machine_id") },
+            inverseJoinColumns = { @JoinColumn(name = "category_id") }
+    )
+    private Set<Category> categories = new HashSet<>();
 }

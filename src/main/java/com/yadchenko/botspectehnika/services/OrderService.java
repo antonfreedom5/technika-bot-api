@@ -32,6 +32,7 @@ public class OrderService {
         Order order = new Order();
         order.setMachine(orderDto.machine());
         order.setAttachment(orderDto.attachment());
+        order.setCategory(orderDto.category());
         order.setDate(orderDto.date());
         order.setOrderDate(new Date());
         order.setPlace(orderDto.place());
@@ -47,11 +48,14 @@ public class OrderService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String date = simpleDateFormat.format(orderDto.date());
 
-        SendMessage messageToGroup = messageService.create(botConfig.getChatId(), "Новый заказ!\n" + orderDto.machine().getName() + "\n" + orderDto.attachment().getName() + "\n" + orderDto.place() + "\n" + date, keyBoardMarkupService.takeOrderMarkup(savedOrder.getId()));
+        String newOrderMessage = "Новый заказ!\n\n" + orderDto.machine().getName() + "\n" + (orderDto.category() == null ? "" : (orderDto.category().getName() + "\n")) + (orderDto.attachment() == null ? "" : (orderDto.attachment().getName() + "\n")) + orderDto.place() + "\n" + date;
+
+        SendMessage messageToGroup = messageService.create(botConfig.getChatId(), newOrderMessage , keyBoardMarkupService.takeOrderMarkup(savedOrder.getId()));
         telegramBot.execute(messageToGroup);
 
         if (orderDto.user() != null) {
-            SendMessage messageToUser = messageService.create(orderDto.user().getId(), "Ваша заявка принята!\n" + orderDto.machine().getName() + "\n" + orderDto.attachment().getName() + "\n" + orderDto.place() + "\n" + date + "\n" + orderDto.phone());
+            String userMessage = "Ваша заявка принята!\n" + orderDto.machine().getName() + "\n" + (orderDto.category() == null ? "" : (orderDto.category().getName() + "\n")) + (orderDto.attachment() == null ? "" : (orderDto.attachment().getName() + "\n")) + orderDto.place() + "\n" + date + "\n" + orderDto.phone();
+            SendMessage messageToUser = messageService.create(orderDto.user().getId(), userMessage);
             telegramBot.execute(messageToUser);
         }
 

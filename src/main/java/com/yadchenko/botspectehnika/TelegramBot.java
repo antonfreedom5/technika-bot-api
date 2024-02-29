@@ -86,9 +86,9 @@ public class TelegramBot extends TelegramLongPollingBot {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
                 String date = simpleDateFormat.format(order.getDate());
 
-                SendMessage sendMessage = messageService.create(update.getCallbackQuery().getFrom().getId(), "Ура! У тебя новый заказ!\n" + order.getMachine().getName() + "\n" + order.getAttachment().getName() + "\n" + order.getPlace() + "\n" + date + "\n" + order.getPhone());
+                SendMessage sendMessage = messageService.create(update.getCallbackQuery().getFrom().getId(), "Ура! У тебя новый заказ!\n\n" + order.getMachine().getName() + "\n" + (order.getCategory() == null ? "" : (order.getCategory().getName() + "\n")) + (order.getAttachment() == null ? "" : (order.getAttachment().getName() + "\n")) + order.getPlace() + "\n" + date + "\n" + order.getPhone());
                 executeMessage(sendMessage);
-                EditMessageText editMessageText = editMessageService.create(update.getCallbackQuery().getMessage().getChatId(), update.getCallbackQuery().getMessage().getMessageId(), order.getMachine().getName() + "\n" + order.getAttachment().getName() + "\n" + order.getPlace() + "\n" + date + "\n" + "Заказ взял " + update.getCallbackQuery().getFrom().getFirstName());
+                EditMessageText editMessageText = editMessageService.create(update.getCallbackQuery().getMessage().getChatId(), update.getCallbackQuery().getMessage().getMessageId(), order.getMachine().getName() + "\n" + (order.getCategory() == null ? "" : (order.getCategory().getName() + "\n")) + (order.getAttachment() == null ? "" : (order.getAttachment().getName() + "\n")) + order.getPlace() + "\n" + date + "\n" + "Заказ взял " + update.getCallbackQuery().getFrom().getFirstName());
                 executeMessage(editMessageText);
 
                 log.info("Employee got new order to work! Order: {}, Employee: {}", order.getId(), order.getEmployee().getId());
