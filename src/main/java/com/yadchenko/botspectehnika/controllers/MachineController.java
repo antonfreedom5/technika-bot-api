@@ -17,7 +17,7 @@ public class MachineController {
     private final MachineService machineService;
 
     @GetMapping("/all")
-    List<Machine> getAll(@RequestHeader(value="User-Id") String userId) {
+    List<Machine> getAll(@RequestHeader(required = false, value="User-Id") String userId) {
         log.info("User with id {} opened the bot", userId);
         return machineService.getAll();
     }
