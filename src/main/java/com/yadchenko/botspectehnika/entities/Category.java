@@ -12,6 +12,7 @@ import java.util.Set;
 @Setter
 @Entity
 public class Category {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -19,6 +20,8 @@ public class Category {
     private String name;
 
     private String imgUrl;
+
+    private Integer price;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "categories")
