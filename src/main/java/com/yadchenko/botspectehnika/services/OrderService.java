@@ -44,7 +44,8 @@ public class OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        String pattern = "dd.MM.yyyy";
+        String pattern = "dd MMMM yyyy";
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         String date = simpleDateFormat.format(orderDto.date());
 

@@ -82,7 +82,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
                 orderRepository.save(order);
 
-                String pattern = "MM-dd-yyyy";
+                String pattern = "dd MMMM yyyy";
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
                 String date = simpleDateFormat.format(order.getDate());
 
