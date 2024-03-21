@@ -13,6 +13,7 @@ bot:
   name:
   token:
   chatId:
+  superUserId:
 
 message:
   defaultMessage: "Ну здрасьте, приехали! Чтобы начать нажмите /start"

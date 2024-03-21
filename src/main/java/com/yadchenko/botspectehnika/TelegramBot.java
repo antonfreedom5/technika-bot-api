@@ -67,7 +67,12 @@ public class TelegramBot extends TelegramLongPollingBot {
                         log.info("New user joined to chat! Id: {}, Name: {}", update.getMessage().getFrom().getId(), update.getMessage().getFrom().getFirstName());
                     }
                     case "/clients" -> executeMessage(messageService.getUserStatistic(update.getMessage().getChat().getId()));
-                    default -> {}
+                    default -> {
+                        User from = update.getMessage().getFrom();
+                        String message = "От %s, %s\n%s".formatted(from.getFirstName(), from.getId(), update.getMessage().getText());
+                        SendMessage sendMessage = messageService.create(botConfig.getSuperUserId(), message);
+                        executeMessage(sendMessage);
+                    }
                 }
             }
         }

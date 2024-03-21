@@ -11,4 +11,5 @@ public class BotConfig {
     private String name;
     private String token;
     private Long chatId;
+    private Long superUserId;
 }
