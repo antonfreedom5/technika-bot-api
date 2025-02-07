@@ -14,6 +14,7 @@ bot:
   token:
   chatId:
   superUserId:
+  apikey:
 
 message:
   defaultMessage: "Ну здрасьте, приехали! Чтобы начать нажмите /start"
