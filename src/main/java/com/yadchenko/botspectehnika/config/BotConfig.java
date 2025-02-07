@@ -12,4 +12,5 @@ public class BotConfig {
     private String token;
     private Long chatId;
     private Long superUserId;
+    private String apikey;
 }

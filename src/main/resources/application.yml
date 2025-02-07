@@ -27,5 +27,5 @@ message:
   successInUserChat: "Заявка отправлена. Водитель техники свяжется с Вами в течении 10 минут."
   newOrderInGeneralChat: "Новый заказ!\n%s, %s\nМесто: %s\nДата:%s"
   editedOrderInGeneralChat: "Новый заказ! %s, %s\nВ работу взял %s"
-  newOrderInEmployeeChat: "Ура! У тебя новый заказ!\n%s, %s\nИмя: %s\nМесто: %s\nДата: %s\nТелефон: %s"
+  newOrderInEmployeeChat: "Новый заказ!\n%s, %s\nИмя: %s\nМесто: %s\nДата: %s\nТелефон: %s"
 
